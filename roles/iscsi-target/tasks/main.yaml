@@ -1,0 +1,37 @@
+---
+- name: Check OS supported
+  fail: msg="OS {{ ansible_os_family }} is unsupported"
+  when: ansible_os_family != "RedHat"
+
+- name: Add OS specific variables
+  include_vars: "{{ item }}"
+  with_items:
+    - "../vars/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yaml"
+    - ../vars/iscsi_params.yaml
+
+- name: Install rpm packages
+  yum: name={{ item }} state=present
+  with_items:
+      - "{{ iscsi_target.packages }}"
+      - "{{ iscsi_params.packages }}"
+
+- name: Enable/start service
+  service: name={{ item }} state=started enabled=true
+  with_items: "{{ iscsi_target.services }}"
+
+- name: Config iSCSI
+  include: "{{ iscsi_target.method }}_config.yaml"
+  when: delete_iscsi is undefined
+
+- name: Login iSCSI target
+  include: iscsi_login.yaml
+  when: delete_iscsi is undefined
+
+
+- name: Logout iSCSI target
+  include: iscsi_logout.yaml
+  when: delete_iscsi is defined
+
+- name: Delete iSCSI config
+  include: "{{ iscsi_target.method }}_delete.yaml"
+  when: delete_iscsi is defined

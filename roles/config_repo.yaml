@@ -1,0 +1,18 @@
+---
+- hosts: all
+  user: root
+  vars:
+    repo_dir: "/etc/yum.repos.d/"
+  tasks:
+    - name: Find exist repos
+      shell: ls -1 {{ repo_dir }}
+      register: repos
+    - name: Remove all repos
+      file: path={{ repo_dir }}{{ item }} state=absent
+      with_items:
+          "{{ repos.stdout_lines }}"
+    - name: Copy new repos
+      template: src={{ item }} dest={{ repo_dir }}{{ item }}
+      with_items:
+          - rhel7-latest.repo
+          - rhel7-epel.repo

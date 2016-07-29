@@ -1,0 +1,8 @@
+---
+iscsi_target:
+  packages:
+    - targetcli
+  services:
+    - target
+  method: lio
+  has_firewalld: True

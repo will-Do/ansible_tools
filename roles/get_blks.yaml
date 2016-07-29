@@ -1,0 +1,9 @@
+---
+- hosts: all
+  tasks:
+    - name: Fetch block disks
+      shell: lsblk -d --output NAME
+      register: lsblk_output
+      sudo: yes
+    - name: Print the output
+      debug: msg="{{lsblk_output['stdout']}}"

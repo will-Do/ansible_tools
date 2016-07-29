@@ -1,0 +1,6 @@
+[RHEL-Server]
+name=rhel_server
+baseurl=${RHEL7-latest-repo}
+enabled=1
+gpgcheck=0
+skip_if_unavailable=1

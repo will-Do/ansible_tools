@@ -1,0 +1,6 @@
+---
+# Config and login iSCSI by default
+# Define var 'delete_iscsi' or pass it in command line to revers
+- hosts: Test-hosts
+  roles:
+    - iscsi-target

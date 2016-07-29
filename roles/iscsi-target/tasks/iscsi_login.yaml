@@ -1,0 +1,12 @@
+---
+# Discovery and login iSCSI target
+- name: Discover the iSCSI target
+  shell: "iscsiadm -m discovery -t sendtargets -p {{ iscsi_params.portal }}:{{ iscsi_params.port }}"
+  register: cmd_ret
+
+- name: Check discovery result
+  fail: msg="Not discover {{ iscsi_params.target_name }}"
+  when: not cmd_ret.stdout | search("{{ iscsi_params.target_name }}")
+
+- name: Login the iSCSI target
+  shell: "iscsiadm --mode node --login --targetname {{ iscsi_params.target_name }} -p {{ iscsi_params.portal }}:{{ iscsi_params.port }}"

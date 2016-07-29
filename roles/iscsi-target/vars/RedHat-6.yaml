@@ -1,0 +1,8 @@
+---
+iscsi_target:
+    package:
+      - scsi-target-utils
+    services:
+      - tgtd
+    method: tgtd
+    has_firewalld: False

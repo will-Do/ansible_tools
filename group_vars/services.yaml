@@ -1,0 +1,12 @@
+---
+iscsi:
+  services:
+    - iscsid
+    - iscsi
+lio:
+  services:
+    - target
+
+tgtd:
+  services:
+    - tgtd

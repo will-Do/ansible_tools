@@ -1,0 +1,13 @@
+---
+iscsi_params:
+  packages:
+    - iscsi-initiator-utils
+  backstore_type: fileio
+  backstore_name: device.iscsi
+  file_name: /tmp/emulated-iscsi-image
+  file_size: 1G
+  target_name: iqn.2016-06.redhat.com:emulated-iscsi.target
+  portal: 127.0.0.1
+  port: 3260
+  authentication: 0
+  config_iscsi: True

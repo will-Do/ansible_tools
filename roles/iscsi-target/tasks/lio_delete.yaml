@@ -1,0 +1,35 @@
+---
+# Delete lio iSCSI target
+
+- name: Delete iSCSI target
+  shell: "targetcli /iscsi/ delete {{ iscsi_params.target_name }}"
+  register: cmd_ret
+  ignore_errors: True
+
+- name: Check delete iSCSI target result
+  fail: msg="{{ cmd_ret.stderr }}"
+  when: cmd_ret.rc != 0 and not cmd_ret.stderr | search('No such Target')
+
+- name: Delete fileio backstore
+  shell: "targetcli /backstores/fileio delete {{ iscsi_params.backstore_name }}"
+  register: cmd_ret
+  ignore_errors: True
+
+- name: Check delete filio backstore result
+  fail: msg="{{ cmd_ret.stderr }}"
+  when: cmd_ret.rc != 0 and not cmd_ret.stderr | search('No storage object')
+
+- name: Delete backstore image fileio
+  file: path="{{ iscsi_params.file_name }}" state=absent
+
+- name: Check firewalld state
+  shell: "firewall-cmd --state"
+  register: cmd_ret
+
+- name: Disable firewalld port {{ iscsi_params.port }}
+  firewalld: port="{{iscsi_params.port}}/tcp" permanent=False state=disabled
+  when: cmd_ret.stdout == "running"
+
+- name: Save targetcli configuration
+  shell: "targetcli  / saveconfig"
+  notify: Restart iscsid

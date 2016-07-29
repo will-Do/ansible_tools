@@ -1,0 +1,20 @@
+---
+# logout and delete iSCSI target
+- name: Logout the iSCSI target
+  shell: "iscsiadm --mode node --logout --targetname {{ iscsi_params.target_name }} -p {{ iscsi_params.portal }}:{{ iscsi_params.port }}"
+  register: cmd_ret
+  ignore_errors: True
+
+- name: Check logout result
+  fail: msg="{{ cmd_ret.stderr }}"
+  when: cmd_ret.rc != 0 and not cmd_ret.stderr | search('No matching sessions found')
+
+- name: Delete target node record
+  shell: "iscsiadm -m node -o delete  --targetname {{ iscsi_params.target_name }} -p {{ iscsi_params.portal }}:{{ iscsi_params.port }}" 
+  register: cmd_ret
+  ignore_errors: True
+
+- name: Check delete record result
+  fail: msg="{{ cmd_ret.stderr }}"
+  when: cmd_ret.rc != 0 and not cmd_ret.stderr | search('No records found')
+

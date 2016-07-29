@@ -1,0 +1,10 @@
+---
+- name: Restart target 
+  service: name=target state=restarted
+
+- name: Restart tgtd 
+  service: name=tgtd state=restarted
+
+- name: Restart iscsid
+  service: name=iscsid state=restarted
+
